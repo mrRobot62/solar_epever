@@ -35,6 +35,10 @@ The software is devided into several parts and classes
 * Test your RP2040. Is it connected to your computer? Can you access to the device with your file explorer?
 * download this github repo to your local computer into a folder
 * copy all content from this folder onto your [PICO](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html)
+
+## Wiring
+> insert imagef
+
 # Configuration
 Open in Thonny the file `settings.toml`
 
