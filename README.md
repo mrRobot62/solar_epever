@@ -138,8 +138,12 @@ Only used for storing an interval value for running tasks
 Only used to store an error code. This code indicates the error with a blinking led on your PICO 
 
 # Class EPEVER
+Configure all possible (usefull) EPEVER function codes and register to read. Collected data are represented as
+* raw bytearray `0103020069786a`  
+* decoded as a dict `{'03': ['0x1', '0x3', '0x2', '0x69']}`
+* converted as dict for human reading : `{'len': 2, 'info': '', 'value': 1.05, 'type': 'E2', 'register': '9001', 'unit': "'Ah", 'fcode': '03'}`
 
 # Class ModBusRTU
-
+Currently this ModBus class can only **READ** from a ModBus device. No **WRITING** back to the device is implemented
 # Class SolarMQTT
 
