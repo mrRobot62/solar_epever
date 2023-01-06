@@ -1,0 +1,301 @@
+2471.268: INFO - 
+ _____  _____  _____  _____  _____  _____ 
+|   __||  _  ||   __||  |  ||   __|| __  |
+|   __||   __||   __||  |  ||   __||    -|
+|_____||__|   |_____| \___/ |_____||__|__|                                                                                                                               
+    
+2471.272: INFO - V 0.1.0
+2471.276: INFO - EPVER connected via UART=<UART>
+2471.280: INFO - EPVER SlaveID=1
+2471.284: INFO - Connecting to WiFi ...
+2471.298: INFO - SolarPICO connected
+2471.306: INFO - My MAC addr: 28-CD-C1-06-AD-67
+>>>>>>>>> FCode '03'
+---------- Register '9000'
+2471.412: INFO - SEND:		bytearray(b'010390000001a90a')	(8)
+2473.462: INFO - RECEIVE:
+raw:		0103020000b844
+decoded:	{'03': ['0x1', '0x3', '0x2', '0x0']}
+converted:	{'len': 2, 'info': '', 'value': 0.0, 'type': 'E1', 'register': '9000', 'unit': 'Type', 'fcode': '03'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '9001'
+2478.481: INFO - SEND:		bytearray(b'010390010001f8ca')	(8)
+2480.530: INFO - RECEIVE:
+raw:		0103020069786a
+decoded:	{'03': ['0x1', '0x3', '0x2', '0x69']}
+converted:	{'len': 2, 'info': '', 'value': 1.05, 'type': 'E2', 'register': '9001', 'unit': "'Ah", 'fcode': '03'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '9002'
+2485.549: INFO - SEND:		bytearray(b'01039002000108ca')	(8)
+2487.596: INFO - RECEIVE:
+raw:		0103020000b844
+decoded:	{'03': ['0x1', '0x3', '0x2', '0x0']}
+converted:	{'len': 2, 'info': '', 'value': 0.0, 'type': 'E3', 'register': '9002', 'unit': 'mV', 'fcode': '03'}
+>>>> HEART-BEAT <<<< 0.15/1
+>>>>>>>>> FCode '04'
+---------- Register '3000'
+2492.618: INFO - SEND:		bytearray(b'0104300000013eca')	(8)
+2494.671: INFO - RECEIVE:
+raw:		0104023a98aa3a
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x3a98']}
+converted:	{'len': 2, 'info': 'PV array rated voltage', 'value': 150.0, 'type': 'A1', 'register': '3000', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3001'
+2499.690: INFO - SEND:		bytearray(b'0104300100016f0a')	(8)
+2501.735: INFO - RECEIVE:
+raw:		0104020fa0bcb8
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xfa0']}
+converted:	{'len': 2, 'info': 'PV array rated current', 'value': 40.0, 'type': 'A2', 'register': '3001', 'unit': 'A', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3002'
+2506.754: INFO - SEND:		bytearray(b'010430020002df0b')	(8)
+2508.804: INFO - RECEIVE:
+raw:		0104042c800003b2fd
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x2c80', '0x3']}
+converted:	{'len': 4, 'info': 'PV array rated power (L=16bit, H=16Bit at 0x3003)', 'value': 113.92, 'type': 'A3', 'register': '3002', 'unit': 'W', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3004'
+2513.823: INFO - SEND:		bytearray(b'0104300400017f0b')	(8)
+2515.872: INFO - RECEIVE:
+raw:		01040212c0b5c0
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x12c0']}
+converted:	{'len': 2, 'info': 'Rated voltage to bat', 'value': 48.0, 'type': 'A5', 'register': '3004', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3005'
+2520.890: INFO - SEND:		bytearray(b'0104300500012ecb')	(8)
+2522.935: INFO - RECEIVE:
+raw:		0104020fa0bcb8
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xfa0']}
+converted:	{'len': 2, 'info': 'Rated current to bat', 'value': 40.0, 'type': 'A6', 'register': '3005', 'unit': 'A', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3006'
+2527.954: INFO - SEND:		bytearray(b'0104300600029eca')	(8)
+2530.002: INFO - RECEIVE:
+raw:		0104042c800003b2fd
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x2c80', '0x3']}
+converted:	{'len': 4, 'info': 'Rated power to bat (L & H (0x3007)', 'value': 113.92, 'type': 'A7', 'register': '3006', 'unit': 'W', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3008'
+2535.021: INFO - SEND:		bytearray(b'010430080001bf08')	(8)
+2537.073: INFO - RECEIVE:
+raw:		010402000238f1
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x2']}
+converted:	{'fcode': '04', 'binary': '10', 'len': 2, 'info': 'Connect/disconnect', 'register': '3008', 'type': 'A9', 'value': 0.02, 'unit': '-'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '300E'
+2542.094: INFO - SEND:		bytearray(b'0104300e00015f09')	(8)
+2544.146: INFO - RECEIVE:
+raw:		0104020fa0bcb8
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xfa0']}
+converted:	{'len': 2, 'info': 'rated current of load', 'value': 40.0, 'type': 'A10', 'register': '300e', 'unit': 'W', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3100'
+2549.166: INFO - SEND:		bytearray(b'0104310000013f36')	(8)
+2551.214: INFO - RECEIVE:
+raw:		0104022559639a
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x2559']}
+converted:	{'len': 2, 'info': 'Solar charger PV-voltage', 'value': 95.61, 'type': 'B1', 'register': '3100', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3101'
+2556.232: INFO - SEND:		bytearray(b'0104310100016ef6')	(8)
+2558.282: INFO - RECEIVE:
+raw:		01040200e3f8b9
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xe3']}
+converted:	{'len': 2, 'info': 'Solar charger PV-current', 'value': 2.27, 'type': 'B2', 'register': '3101', 'unit': 'A', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3102'
+2563.302: INFO - SEND:		bytearray(b'010431020002def7')	(8)
+2565.353: INFO - RECEIVE:
+raw:		010404593b000098d5
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x593b', '0x0']}
+converted:	{'len': 4, 'info': 'Solar PV-Power L (0x3103 PV-Power H)', 'value': 228.43, 'type': 'B3', 'register': '3102', 'unit': 'W', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3106'
+2570.372: INFO - SEND:		bytearray(b'0104310600029f36')	(8)
+2572.427: INFO - RECEIVE:
+raw:		010404708c000020af
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x708c', '0x0']}
+converted:	{'len': 4, 'info': 'Solar Bat-Power L (0x3107 Bat-Power H)', 'value': 288.12, 'type': 'B7', 'register': '3106', 'unit': 'W', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '310C'
+2577.446: INFO - SEND:		bytearray(b'0104310c0001ff35')	(8)
+2579.503: INFO - RECEIVE:
+raw:		0104020000b930
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x0']}
+converted:	{'len': 2, 'info': 'Load voltage', 'value': 0.0, 'type': 'B13', 'register': '310c', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '310D'
+2584.523: INFO - SEND:		bytearray(b'0104310d0001aef5')	(8)
+2586.574: INFO - RECEIVE:
+raw:		0104020000b930
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x0']}
+converted:	{'len': 2, 'info': 'Load current', 'value': 0.0, 'type': 'B14', 'register': '310d', 'unit': 'A', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '310E'
+2591.594: INFO - SEND:		bytearray(b'0104310e00021ef4')	(8)
+2593.645: INFO - RECEIVE:
+raw:		01040400000000fb84
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x0', '0x0']}
+converted:	{'len': 4, 'info': 'Load Power L (0x310F H)', 'value': 0.0, 'type': 'B15', 'register': '310e', 'unit': 'W', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3110'
+2598.665: INFO - SEND:		bytearray(b'0104311000013ef3')	(8)
+2600.714: INFO - RECEIVE:
+raw:		0104020bbd7e71
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xbbd']}
+converted:	{'len': 2, 'info': 'Bat Temp', 'value': 30.05, 'type': 'B17', 'register': '3110', 'unit': '°C', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3111'
+2605.734: INFO - SEND:		bytearray(b'0104311100016f33')	(8)
+2607.784: INFO - RECEIVE:
+raw:		0104020ffbfd43
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xffb']}
+converted:	{'len': 2, 'info': 'Temp inside charger', 'value': 40.91, 'type': 'B18', 'register': '3111', 'unit': '°C', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '311A'
+2612.803: INFO - SEND:		bytearray(b'0104311a00011ef1')	(8)
+2614.851: INFO - RECEIVE:
+raw:		0104020027f92a
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x27']}
+converted:	{'len': 2, 'info': 'Bat SOC', 'value': 39.0, 'type': 'B27', 'register': '311a', 'unit': '%', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '311B'
+2619.871: INFO - SEND:		bytearray(b'0104311b00014f31')	(8)
+2621.916: INFO - RECEIVE:
+raw:		0104020000b930
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x0']}
+converted:	{'len': 2, 'info': 'Bat Temp remote sensor', 'value': 0.0, 'type': 'B28', 'register': '311b', 'unit': '°C', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '311D'
+2626.936: INFO - SEND:		bytearray(b'0104311d0001af30')	(8)
+2628.984: INFO - RECEIVE:
+raw:		0104020960bf48
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x960']}
+converted:	{'len': 2, 'info': 'current system rated voltage', 'value': 24.0, 'type': 'B30', 'register': '311d', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3200'
+2634.004: INFO - SEND:		bytearray(b'0104320000013f72')	(8)
+2636.056: INFO - RECEIVE:
+raw:		0104020000b930
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x0']}
+converted:	{'fcode': '04', 'binary': '0', 'len': 2, 'info': 'Bat Status 16Bit-Field', 'register': '3200', 'type': 'C1', 'value': 0.0, 'unit': '-'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3201'
+2641.074: INFO - SEND:		bytearray(b'0104320100016eb2')	(8)
+2643.128: INFO - RECEIVE:
+raw:		010402000bf8f7
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xb']}
+converted:	{'fcode': '04', 'binary': '1011', 'len': 2, 'info': 'Charging status 16Bit-Field', 'register': '3201', 'type': 'C2', 'value': 11.0, 'unit': '-'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3202'
+2648.147: INFO - SEND:		bytearray(b'0104320200019eb2')	(8)
+2650.192: INFO - RECEIVE:
+raw:		0104020000b930
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x0']}
+converted:	{'fcode': '04', 'binary': '0', 'len': 2, 'info': 'Discharging status 16Bit-Field', 'register': '3202', 'type': 'C27', 'value': 0.0, 'unit': '-'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3300'
+2655.212: INFO - SEND:		bytearray(b'0104330000013e8e')	(8)
+2657.262: INFO - RECEIVE:
+raw:		0104022fbca4b1
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x2fbc']}
+converted:	{'len': 2, 'info': 'Max PV volt today', 'value': 122.2, 'type': 'D0', 'register': '3300', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3301'
+2662.283: INFO - SEND:		bytearray(b'0104330100016f4e')	(8)
+2664.326: INFO - RECEIVE:
+raw:		010402004cb8c5
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x4c']}
+converted:	{'len': 2, 'info': 'Min PV vol todday', 'value': 0.76, 'type': 'D1', 'register': '3301', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3302'
+2669.346: INFO - SEND:		bytearray(b'0104330200019f4e')	(8)
+2671.399: INFO - RECEIVE:
+raw:		0104020a123f9d
+decoded:	{'04': ['0x1', '0x4', '0x2', '0xa12']}
+converted:	{'len': 2, 'info': 'Max bat volt today', 'value': 25.78, 'type': 'D2', 'register': '3302', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3303'
+2676.419: INFO - SEND:		bytearray(b'010433030001ce8e')	(8)
+2678.466: INFO - RECEIVE:
+raw:		0104020937feb6
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x937']}
+converted:	{'len': 2, 'info': 'Min bat volt today', 'value': 23.59, 'type': 'D3', 'register': '3303', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3304'
+2683.485: INFO - SEND:		bytearray(b'0104330400023f4e')	(8)
+2685.538: INFO - RECEIVE:
+raw:		01040400000000fb84
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x0', '0x0']}
+converted:	{'len': 4, 'info': 'consumed energy today L(D4) & H (D5)', 'value': 0.0, 'type': 'D4', 'register': '3304', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3306'
+2690.556: INFO - SEND:		bytearray(b'0104330600029e8e')	(8)
+2692.614: INFO - RECEIVE:
+raw:		01040400000000fb84
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x0', '0x0']}
+converted:	{'len': 4, 'info': 'consumed energy month L(D8) H(D9)', 'value': 0.0, 'type': 'D6', 'register': '3306', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3308'
+2697.633: INFO - SEND:		bytearray(b'010433080002ff4d')	(8)
+2699.683: INFO - RECEIVE:
+raw:		01040400000000fb84
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x0', '0x0']}
+converted:	{'len': 4, 'info': 'consumed energy year L(D8) H(D9)', 'value': 0.0, 'type': 'D8', 'register': '3308', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '330A'
+2704.704: INFO - SEND:		bytearray(b'0104330a00025e8d')	(8)
+2706.753: INFO - RECEIVE:
+raw:		010404000600001b85
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x6', '0x0']}
+converted:	{'len': 4, 'info': 'consumed energy total L(D10) H(D11)', 'value': 0.06, 'type': 'D10', 'register': '330a', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '330C'
+2711.772: INFO - SEND:		bytearray(b'0104330c0002be8c')	(8)
+2713.820: INFO - RECEIVE:
+raw:		010404004a0000da52
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x4a', '0x0']}
+converted:	{'len': 4, 'info': 'generated energy today L(D12) H(D13)', 'value': 0.74, 'type': 'D12', 'register': '330c', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '330E'
+2718.840: INFO - SEND:		bytearray(b'0104330e00021f4c')	(8)
+2720.890: INFO - RECEIVE:
+raw:		01040400e300000a72
+decoded:	{'04': ['0x1', '0x4', '0x4', '0xe3', '0x0']}
+converted:	{'len': 4, 'info': 'generated energy month L(D14) H(D15)', 'value': 2.27, 'type': 'D14', 'register': '330e', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3310'
+2725.908: INFO - SEND:		bytearray(b'0104331000027f4a')	(8)
+2727.957: INFO - RECEIVE:
+raw:		01040400e300000a72
+decoded:	{'04': ['0x1', '0x4', '0x4', '0xe3', '0x0']}
+converted:	{'len': 4, 'info': 'generated energy year L(D16) H(D17)', 'value': 2.27, 'type': 'D16', 'register': '3310', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '3312'
+2732.975: INFO - SEND:		bytearray(b'010433120002de8a')	(8)
+2735.020: INFO - RECEIVE:
+raw:		01040404e600001b43
+decoded:	{'04': ['0x1', '0x4', '0x4', '0x4e6', '0x0']}
+converted:	{'len': 4, 'info': 'generated energy total L(D18) H(D19)', 'value': 12.54, 'type': 'D18', 'register': '3312', 'unit': 'kWh', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '331A'
+2740.040: INFO - SEND:		bytearray(b'0104331a00011f49')	(8)
+2742.085: INFO - RECEIVE:
+raw:		01040209bcbed1
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x9bc']}
+converted:	{'len': 2, 'info': "percentage of battery's remaining capacity", 'value': 24.92, 'type': 'D26', 'register': '331a', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '331B'
+2747.106: INFO - SEND:		bytearray(b'0104331b00014e89')	(8)
+2749.155: INFO - RECEIVE:
+raw:		010402078d7b65
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x78d']}
+converted:	{'len': 2, 'info': 'attery temperature measured by remote temperature sensor', 'value': 19.33, 'type': 'D27', 'register': '331b', 'unit': 'A', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1
+---------- Register '331C'
+2754.174: INFO - SEND:		bytearray(b'0104331c0001ff48')	(8)
+2756.218: INFO - RECEIVE:
+raw:		0104020000b930
+decoded:	{'04': ['0x1', '0x4', '0x2', '0x0']}
+converted:	{'len': 2, 'info': 'Current system rated voltage.', 'value': 0.0, 'type': 'D28', 'register': '331c', 'unit': 'V', 'fcode': '04'}
+>>>> HEART-BEAT <<<< 0.15/1

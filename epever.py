@@ -1,3 +1,4 @@
+
 import board
 import os
 import busio
@@ -36,7 +37,7 @@ class EPEVER(ModBusRTU):
             "3004": {"type": "A5", "unit":"V", "convert":"dec", "scale":100, "quantity":1, "fmt":'>BBBHxx', "info":"Rated voltage to bat"}, # 
             "3005": {"type": "A6", "unit":"A", "convert":"dec", "scale":100, "quantity":1, "fmt":'>BBBHxx', "info":"Rated current to bat"}, # 
             "3006": {"type": "A7", "unit":"W", "convert":"dec", "scale":100, "quantity":2, "fmt":'>BBBHHxx', "info":"Rated power to bat (L & H (0x3007)"}, # 
-            "3008": {"type": "A9", "unit":"-", "convert":"dec", "scale":100, "quantity":1, "fmt":'>BBBHxx', "info":"Connect/disconnect"}, # 
+            "3008": {"type": "A9", "unit":"-", "convert":"bin", "scale":100, "quantity":1, "fmt":'>BBBHxx', "info":"Connect/disconnect"}, # 
             "300E": {"type": "A10", "unit":"W", "convert":"dec", "scale":100, "quantity":1, "fmt":'>BBBHxx', "info":"rated current of load"}, #
             # real-time datum (read-only)
             "3100": {"type": "B1", "unit":"V", "convert":"dec", "scale":100, "quantity":1, "fmt":'>BBBHxx', "info":"Solar charger PV-voltage"}, # 
@@ -78,11 +79,12 @@ class EPEVER(ModBusRTU):
         
     def __init__(self,uart, slaveID=1, demo=False):
         super().__init__(uart,slaveID,demo)
-        #self._modbus = ModBusRTU(uart, self._slaveID, demo)
-        print(self.LOGO)
-        print(self.VERSION)
         self.log = logging.getLogger('EPEVER')        
         self.log.setLevel(os.getenv('EPEVER_LOGLEVEL'))
+        self.log.info(self.LOGO)
+        self.log.info(self.VERSION)
+        self.log.info(f"EPVER connected via UART={uart}")
+        self.log.info(f"EPVER SlaveID={slaveID}")
 
        
     def getFunctionCodeList(self):

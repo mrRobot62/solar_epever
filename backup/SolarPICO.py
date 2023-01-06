@@ -1,10 +1,10 @@
-from solarmqtt import IOBrokerMQTT
+from dalybms import DalyBMS
+from solarmqtt import SolarMQTT
+from soyosourcegtn import SoyoSource
 from epever import EPEVER
 import adafruit_logging as logging
-import ipaddress
 
 import wifi
-import socketpool
 import board
 import os
 import busio
@@ -12,41 +12,32 @@ import digitalio
 import time
 import binascii
 import asyncio
-import adafruit_minimqtt.adafruit_minimqtt as MQTT
+
+#TX = board.GP0
+#RX = board.GP1
 
 LED = board.LED
 
-
 UART0_TX = eval(f"board.{os.getenv('UART0_TX')}")
 UART0_RX = eval(f"board.{os.getenv('UART0_RX')}")
+
 UART1_TX = eval(f"board.{os.getenv('UART1_TX')}")
 UART1_RX = eval(f"board.{os.getenv('UART1_RX')}")
-#UART2_TX = eval(f"board.{os.getenv('UART2_TX')}")
-#UART2_RX = eval(f"board.{os.getenv('UART2_RX')}")
 
-log = logging.getLogger('SolarPICO')        
-log.setLevel(os.getenv('LOGLEVEL'))
+#wifi.radio.connect(os.getenv('CIRCUITPY_WIFI_SSID'), os.getenv('CIRCUITPY_WIFI_PASSWORD'))
+#mqtt = SolarMQTT(wifi)
 
-if os.getenv('EPEVER_UART') == 0:
-    uart0 = busio.UART(UART0_TX, UART0_RX, baudrate=os.getenv('EPEVER_BAUD'))
-    epever = EPEVER(uart0)
+uart0 = busio.UART(UART0_TX, UART0_RX, baudrate=9600)
+uart1 = busio.UART(UART1_TX, UART1_RX, baudrate=115200)
 
-elif os.getenv('EPEVER_UART') == 1:
-    uart1 = busio.UART(UART1_TX, UART1_RX, baudrate=os.getenv('EPEVER_BAUD'))
-    epever = EPEVER(uart1)
-else:
-    msg = "UART not correctly configured"
-    log.error(msg)
-    sys.exit(msg)
-    
+bms = DalyBMS(uart0)
+epever = EPEVER(uart1)
+
 #soyo = SoyoSource(soyo_uart)
 
-log.info("Connecting to WiFi ...")
-wifi.radio.connect(os.getenv('CIRCUITPY_WIFI_SSID'), os.getenv('CIRCUITPY_WIFI_PASSWORD'))
-log.info("SolarPICO connected")
-pool = socketpool.SocketPool(wifi.radio)
-mac = "-".join([ f"{i:02x}" for i in wifi.radio.mac_address]).upper()
-log.info(f"My MAC addr: {mac}")
+log = logging.getLogger('EPEVER')        
+log.setLevel(os.getenv('EPEVER_LOGLEVEL'))
+
 
 class ErrorObj:
     """ Simple class to hold an error code and an error interval"""
@@ -173,3 +164,7 @@ async def main():
 
 
 asyncio.run(main())
+
+#    if os.getenv('BMS_DEMO'):
+#        print ("\n\n-------- BYE -- END - DEMO -------- ")
+#        break
