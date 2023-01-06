@@ -18,7 +18,7 @@ The software is devided into several parts and classes
 * **EPEPVER:** Define all function codes and register for reading, decoding and converting data
 * **SolarMQTT:** Simple class to send data to a MQTT-Broker
 * **settings.toml** Configuration file
-* **folder lib** includes all necessary adafruit libraries
+* **folder `lib`** includes all necessary adafruit libraries
 
 # Dependencies
 * You need a [PICO with WLAN](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#raspberry-pi-pico-w-and-pico-wh)
