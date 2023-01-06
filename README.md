@@ -34,10 +34,16 @@ The software is devided into several parts and classes
 * install CircuitPython on your device. Please follow instruction form [CircuitPython.org](https://docs.circuitpython.org/en/latest/README.html#get-circuitpython).
 * Test your RP2040. Is it connected to your computer? Can you access to the device with your file explorer?
 * download this github repo to your local computer into a folder
-* copy all content from this folder onto your [PICO](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html)
+* copy this files onto your [PICO](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html)
+
+<img src="img/pico_files.png" width="200"><br>
+(the backup-folder is not part of the repo ! Ignore it ;-) 
 
 ## Wiring
-> insert imagef
+<img src="img/wiring.png" width="800"><br>
+
+<img src="img/epever_tracer_rj45.png" width="250"><br>
+
 
 # Configuration
 Open in Thonny the file `settings.toml`
@@ -191,4 +197,7 @@ Configure all possible (usefull) EPEVER function codes and register to read. Col
 ## Class ModBusRTU
 Currently this ModBus class can only **READ** from a ModBus device. No **WRITING** back to the device is implemented
 ## Class SolarMQTT
+Base MQTT-Client class. This can be used for any MQTT-Client connections to your own broker
 
+### Class IOBrokerMQTT
+Derived class from `SolarMQTT` to facilitate the conversion of EPEVER data into MQTT topics.

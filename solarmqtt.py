@@ -5,6 +5,7 @@ import ssl
 import socketpool
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 import time
+import adafruit_logging as logging
 
 
 class SolarMQTT():
@@ -12,16 +13,12 @@ class SolarMQTT():
     Standart MQTT client to read/write data to an topic on an MQTT-Broker
     """
     def __init__(self, wifi):
+        self.log = logging.getLogger('MQTT')        
+        self.log.setLevel(os.getenv('MQTT_LOGLEVEL'))
         self.mqtt_topic = f"/{os.getenv('MQTT_PREFIX')}/{os.getenv('MQTT_TOPIC')}" 
-        print("Connecting to WiFi")
-        wifi.radio.connect(os.getenv('CIRCUITPY_WIFI_SSID'), os.getenv('CIRCUITPY_WIFI_PASSWORD'))
-        print("My MAC addr:", [hex(i) for i in wifi.radio.mac_address])
-        print("Connected to WiFi")
-        print("My IP address is", wifi.radio.ipv4_address)
-        self.ipv4 = ipaddress.ip_address(os.getenv('MQTT_BROKER_IP'))
-        print("Ping ioBroker-MQTT: %f ms" % (wifi.radio.ping(self.ipv4)*1000))
+        ipv4 = ipaddress.ip_address(os.getenv('MQTT_BROKER_IP'))
+        log.info("Ping configured MQTT-Broker: %f ms" % (wifi.radio.ping(ipv4)*1000))
         self.pool = socketpool.SocketPool(wifi.radio)
-        print("Socket pool initialized")
         self.mqtt_client = MQTT.MQTT(
             broker=os.getenv('MQTT_BROKER_IP'),
             port=os.getenv('MQTT_PORT'),
@@ -39,24 +36,24 @@ class SolarMQTT():
         self.mqtt_client.connect()
 
 
-    def connected(client, userdata, flags, rc):
+    def connected(self, client, userdata, flags, rc):
         """ callback after successfully connectioin to broker"""
         print(f"MQTT-Broker on IP: {os.getenv('MQTT_BROKER_IP')}:{os.getenv('MQTT_PORT')} conneted to topic '{mqtt_topic}'")
         client.subscribe(self.mqtt_topic)
 
-    def disconnected(client, userdata, rc):
+    def disconnected(self, client, userdata, rc):
         """ callback after successfully disconnection from MQTT-Broker"""
         print("Disconnected from MQTT-Broker")
         
-    def subscription(client, topic, message):
+    def subscription(self, client, topic, message):
         """ callback if message arrived from MQTT-Broker"""
         print("New message on topic {0}: {1}".format(topic, message))
         
-    def publish(topic, message):
+    def publish(self, topic, message):
         """ send a message to MQTT-Broker"""
         self.client.publish(topic, message)
 
-    def getSubTopic(subtopic):
+    def getSubTopic(self, subtopic):
         return f"""{self.mqtt_topic}/{subtopic}"""
 
 
@@ -65,14 +62,13 @@ class IOBrokerMQTT(SolarMQTT):
     specialized MQTT-Client to work with Solar-Data structs and send them to an MQTT-ioBroker
     """
     def __init__(self,wifi):
-        SolarMQTT.__init(wifi)
+        super().__init__(wifi)
         
     def publish(self, topic, payload):
         """
         send payload to topic.
         
         payload struct:
-        [{"<register>": [<valueA>, <valueB>, ...]}]
         
         Topic:
         topic is the root element combinded with <register> as sub topic followed by
