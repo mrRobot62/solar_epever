@@ -2,7 +2,7 @@
 Written with CircuitPython for a Raspberry RP2040 PICO W board. The software run asynchronously an read all configured registers out from the EPEVER device.
 Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed MQTT extension)
 
-> Please NOTE: this repo is under development. Code.py (automatic starting) is currently not used !
+> Please NOTE: this repo is under development. Code.py (automatic starting) is currently not used ! MQTT data transfer not implemented completely 
 
 ## History
 |Version|Date|Info|
@@ -18,7 +18,7 @@ The software is devided into several parts and classes
 * **EPEPVER:** Define all function codes and register for reading, decoding and converting data
 * **SolarMQTT:** Simple class to send data to a MQTT-Broker
 * **settings.toml** Configuration file
-* **folder lib** includes all necessary adafruit libraries
+* **folder `lib`** includes all necessary adafruit libraries
 
 # Dependencies
 * You need a [PICO with WLAN](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#raspberry-pi-pico-w-and-pico-wh)
@@ -43,24 +43,21 @@ The software is devided into several parts and classes
 Open in Thonny the file `settings.toml`
 
 ## General settings
-Normaly you should nothing change in this section
+Normally you should nothing change in this section
 ```
 ################################################
 # GENERAL
 ################################################
-# 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 UART0_TX = "GP0"
 UART0_RX = "GP1"
 UART1_TX = "GP4"
 UART1_RX = "GP5"
 ```
 ## WLAN
-Configure your SSID and password for access to your WLAN. If configured, please restart your PICO and check if this device can be pinged
-
+Configure your SSID and password for access to your WLAN. After configuration, please restart your PICO and check if this device can be pinged
 ```
 ################################################
 # WiFI-Configuration
-#
 ################################################
 CIRCUITPY_WIFI_SSID="<ssid>"
 CIRCUITPY_WIFI_PASSWORD="<password>"
@@ -114,7 +111,7 @@ This section is used to indicate, that the system is running or if an error occu
 * `HEARTBEAT_INTERVAL` how often a heart beat signal should raised (default 5000ms)
 * `HEARTBEAT_IDLE_INTERVAL` used as blinking frequence (do not change)
 * `HEARTBEAT_ERROR_INTERVAL` if an error occured, this is the blinking frequence (default 500ms, 2x sec)
-* `HEARTBEAT_IDLE` if no error occured, PICO blinks 1x per `HEARTBEAT_IDLE_INTERVAL`
+* `HEARTBEAT_IDLE` if no error occured, PICO blinks 1x per `HEARTBEAT_INTERVAL` with `HEARTBEAT_IDLE_INTERVAL`ms
 * `HEARTBEAT_ERROR_MODBUS` blinks 3x times if something goes wrong with your modbus device
 * `HEARTBEAT_ERROR_MQTT` blinks 6x if something goes wrong with MQTT
 * `HEARTBEAT_ERROR_WLAN` blinks 5x if something goes wrong with your WLAN connection
@@ -136,7 +133,7 @@ HEARTBEAT_ERROR_MQTT = 6
 
 # Running your system
 if everything is installed properly on your PICO start inside Thonny the file `SolarPico.py`
-Afterwards in the terminal window your should see log records
+After this log entries should be visible in the terminal window.
 
 ```
 V 0.1.0
