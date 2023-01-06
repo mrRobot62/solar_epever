@@ -2,7 +2,7 @@
 Written with CircuitPython for a Raspberry RP2040 PICO W board. The software run asynchronously an read all configured registers out from the EPEVER device.
 Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed MQTT extension)
 
-> Please NOTE: this repo is under development. Code.py (automatic starting) is currently not used !
+> Please NOTE: this repo is under development. Code.py (automatic starting) is currently not used ! MQTT data transfer not implemented completely 
 
 ## History
 |Version|Date|Info|
