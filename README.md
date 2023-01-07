@@ -1,13 +1,14 @@
 # EPEVER solar charger - ModBus via RP2040 CircuitPython
-Written with CircuitPython for a Raspberry RP2040 PICO W board. The software run asynchronously an read all configured registers out from the EPEVER device.
+Written in CircuitPython for a Raspberry RP2040 PICO W board. The software run asynchronously an read all configured registers out from the EPEVER device.
 Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed MQTT extension)
 
-> Please NOTE: this repo is under development. Code.py (automatic starting) is currently not used ! MQTT data transfer not implemented completely 
+> Please NOTE: Exception handling is poor implemented. Will work on this issue next time
 
 ## History
 |Version|Date|Info|
 |---|---|---|
 |0.1.0|2023-01-05|initial version working with EPEVER XTRA 4415n|
+|0.2.0|2023-01-07|MQTT implementation, some bugfixes. First stable release|
 ||||
 
 # Quick Overview
@@ -22,13 +23,24 @@ The software is devided into several parts and classes
 
 # Dependencies
 * You need a [PICO with WLAN](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#raspberry-pi-pico-w-and-pico-wh)
+
+<img src="img/pico_w.png" width="250"><br>
+
 * [CircuitPython 8.0.x](https://circuitpython.org/board/raspberry_pi_pico/) installed on your RP204 device. Software was not tested with 7.3.3 or below
+
+<img src="img/circuitpython.png" width="250"><br>
+
 * Connection cable to your EPEVER device. Use an standard RJ45 Ethernet cable and cut one plug to connec to the RS485 adapter
+
+<img src="img/epever.png" width="150"><br>
+
 * Adapter to convert RS485 to UART => [Amazon-Link](https://www.amazon.de/DollaTek-RS485-Adapter-Serieller-Converter/dp/B07DJ4TGY3/ref=sr_1_10?__mk_de_DE=ÅMÅŽÕÑ&crid=161SDT8U5CSX3&keywords=RS485+adapter&qid=1672887030&sprefix=rs485+adapter%2Caps%2C93&sr=8-10)
 
 <img src="img/RS485_UART.png" width="200">
 
 * Install [Thonny-IDE](https://thonny.org) for easy working with your [PICO](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html). Follow installation instructions
+
+<img src="img/thonny.png" width="150"><br>
 
 # Installation
 * install CircuitPython on your device. Please follow instruction form [CircuitPython.org](https://docs.circuitpython.org/en/latest/README.html#get-circuitpython).
@@ -41,9 +53,6 @@ The software is devided into several parts and classes
 
 ## Wiring
 <img src="img/wiring.png" width="800"><br>
-
-<img src="img/epever_tracer_rj45.png" width="250"><br>
-
 
 # Configuration
 Open in Thonny the file `settings.toml`

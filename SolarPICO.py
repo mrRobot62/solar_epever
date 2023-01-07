@@ -1,4 +1,8 @@
-from solarmqtt import IOBrokerMQTT
+"""
+License: see license_gpl-3.0.txt
+"""
+
+from solarmqtt import SolarMQTT, IOBrokerMQTT
 from epever import EPEVER
 import adafruit_logging as logging
 import ipaddress
@@ -12,7 +16,6 @@ import digitalio
 import time
 import binascii
 import asyncio
-import adafruit_minimqtt.adafruit_minimqtt as MQTT
 
 LED = board.LED
 
@@ -45,8 +48,11 @@ log.info("Connecting to WiFi ...")
 wifi.radio.connect(os.getenv('CIRCUITPY_WIFI_SSID'), os.getenv('CIRCUITPY_WIFI_PASSWORD'))
 log.info("SolarPICO connected")
 pool = socketpool.SocketPool(wifi.radio)
-mac = "-".join([ f"{i:02x}" for i in wifi.radio.mac_address]).upper()
-log.info(f"My MAC addr: {mac}")
+mac = ":".join([ f"{i:02x}" for i in wifi.radio.mac_address]).upper()
+log.info(f"MAC:{mac}")
+
+# get my IOBrokerMQTT object
+mqtt = IOBrokerMQTT(SolarMQTT(wifi))
 
 class ErrorObj:
     """ Simple class to hold an error code and an error interval"""
@@ -82,7 +88,7 @@ class Interval:
     
     def __init__(self, initial_interval):
         self.value = float(initial_interval / 1000)
-        
+
 async def TaskWriteLimiter(obj, interval, error):
     while True:
         await asyncio.sleep(interval.value)
@@ -95,6 +101,7 @@ async def TaskReadLimiter(obj, interval, error):
         data = obj.readSOYO()
         print (f"SOYO-DATA {data}")
         result = obj.convertData(data)
+
         print(f"Data from SOYO '{result}'")
         await asyncio.sleep(interval.value)
 
@@ -135,13 +142,16 @@ async def TaskHeartBeat(interval, error):
 
 async def TaskEPEVER(epever, interval, error):
     """ Asynchronous task to read EPEVER MPPT charger - only READ """
-
+    epever_sub_topic = os.getenv("EPEVER_TOPIC_KEY")
     while True:
         for fc in sorted(epever.getFunctionCodeList()):
             print (f">>>>>>>>> FCode '{fc}'")
             for reg in sorted(epever.getRegisterList(fc)):
                 print (f"---------- Register '{reg}'")
-                p = epever.read(fc, int(hex(int(reg,16)),16))   
+                raw, converted = epever.read(fc, int(hex(int(reg,16)),16))  
+                rc = mqtt.publish(converted, epever_sub_topic)
+                if rc > 0:
+                    error.errID(os.getenv('HEARTBEAT_ERROR_MQTT'))
                 await asyncio.sleep(interval.value)
 
 async def TaskErrorTest(interval, error):
@@ -172,4 +182,17 @@ async def main():
     await asyncio.gather(epever_task, hb_task)
 
 
+
+    
+for i in range (5):
+    with digitalio.DigitalInOut(LED) as led:
+        led.switch_to_output(value=False)    
+        led.value = True
+        time.sleep(0.15)
+        led.value = False
+        time.sleep(0.10)        
+
 asyncio.run(main())
+
+
+

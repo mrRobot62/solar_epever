@@ -299,3 +299,7 @@ raw:		0104020000b930
 decoded:	{'04': ['0x1', '0x4', '0x2', '0x0']}
 converted:	{'len': 2, 'info': 'Current system rated voltage.', 'value': 0.0, 'type': 'D28', 'register': '331c', 'unit': 'V', 'fcode': '04'}
 >>>> HEART-BEAT <<<< 0.15/1
+
+
+
+#SELECT mean("value") FROM "sonoff.0.Tasmota_Q3D.Q3D_L2" WHERE time >= now() - 1d and time <= now() = (timeFrom="1d") GROUP BY time(1m) fill(null)

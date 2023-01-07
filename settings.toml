@@ -35,11 +35,12 @@ HEARTBEAT_ERROR_MQTT = 6
 ################################################
 EPEVER_DEMO="False"
 EPEVER_INTERVAL = 5000
-EPEVER_VERSION = "V 0.1.0"
+EPEVER_VERSION = "V 0.2.0"
 EPEVER_UART=1
 EPEVER_BAUD=115200
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 EPEVER_LOGLEVEL=20
+EPEVER_TOPIC_KEY="register"
 
 ################################################
 # MQTT-Configuration
