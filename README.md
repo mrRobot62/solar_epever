@@ -83,7 +83,9 @@ CIRCUITPY_WIFI_PASSWORD="<password>"
 ## EPEVER
 * `EPEVER_UART`. Please configure 0 (UART0) or 1 (UART1)
 * `EPEVER_LOGLEVEL` explicit EPEVER logging level.
-* `EPEVER_INTERVAL` how often should the registered read (in milliseconds). Avoid to fast reading (< 500)
+* `EPEVER_INTERVAL` how often should the registered read (in milliseconds). Avoid to fast reading (< 500
+* `EPEVER_TOPIC_KEY="register"`: possible values: `identifier` or `register `<br>
+If _identifier_ is used, sub-topic name is value from the _identifier_-key from register dict (e.g. A1-A10 or Bx-By ...)<br> if _register_ is used, sub-topic name is the register-address (e.t "3100", "32xy", ...)
 
 ```
 ################################################
@@ -95,6 +97,7 @@ EPEVER_VERSION = "V 0.1.0"
 EPEVER_UART=1
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 EPEVER_LOGLEVEL=20
+EPEVER_TOPIC_KEY="identifier"
 ```
 
 ## MQTT
@@ -106,7 +109,6 @@ EPEVER_LOGLEVEL=20
 * `MQTT_USER` : MQTT-User
 * `MQTT_PW` : MQTT-Users password
 * `MQTT_LOGLEVEL` : explicit MQTT Logging level
-* `EPEVER_TOPIC_KEY="register"`: possible values: `identifier` (sub-topic is the identifiere out from register dictionary (e.g. A1-A10 or Bx-By ...) `register`: take as sub-task name the register-address (e.t "3100", "32xy", ...)
 
 ``` 
 ################################################
