@@ -125,7 +125,7 @@ MQTT_LOGLEVEL=20
 
 ``` 
 
-## HeardBeat
+## Heart-Beat
 This section is used to indicate, that the system is running or if an error occured with a blinking led
 
 * `HEARTBEAT_INTERVAL` how often a heart beat signal should raised (default 5000ms)
