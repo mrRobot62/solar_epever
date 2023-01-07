@@ -106,6 +106,7 @@ EPEVER_LOGLEVEL=20
 * `MQTT_USER` : MQTT-User
 * `MQTT_PW` : MQTT-Users password
 * `MQTT_LOGLEVEL` : explicit MQTT Logging level
+* `EPEVER_TOPIC_KEY="register"`: possible values: `identifier` (sub-topic is the identifiere out from register dictionary (e.g. A1-A10 or Bx-By ...) `register`: take as sub-task name the register-address (e.t "3100", "32xy", ...)
 
 ``` 
 ################################################
