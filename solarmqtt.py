@@ -6,7 +6,7 @@ import socketpool
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 import time
 import adafruit_logging as logging
-
+import json
 
 class SolarMQTT():
     """
@@ -84,19 +84,19 @@ class IOBrokerMQTT():
         """
         rc = 1
         if payload != None:
-            if len(payload) == 7:	# payload must contain 7 keys
-                if 'value' in payload:
-                    data = f"{payload['value']}"
-                    topic_key = ('identifier' if 'identifier' not in payload else topic_key)
-                    topic = self.mqtt.getSubTopic(payload[topic_key])
-                    last_topic = self.mqtt.getSubTopic("_LAST_DATA_")
-                    self.mqtt.publish(topic, data)
-                    self.mqtt.publish(last_topic, str(payload))
-                    rc = 0
-                else:
-                    print ("'value' key not found in payload")
+            if 'value' in payload:
+                #print(f">> payload: {payload}")
+                data = f"{payload['value']}"
+                topic_key = ('identifier' if 'identifier' not in payload else topic_key)
+                topic = self.mqtt.getSubTopic(payload[topic_key])
+                last_topic = self.mqtt.getSubTopic("_LAST_DATA_")
+                self.mqtt.publish(topic, data)
+                # Bugfix : 08.01.23: to avoid parsing error on MQTT-Broker side, convert dict with json.dumps()
+                self.mqtt.publish(last_topic, json.dumps(payload))
+                
+                rc = 0
             else:
-                print (f"payload len({len(payload)}) to short => {payload}")
+                print ("'value' key not found in payload")
         else:
             print ("Payload is none - ignore MQTT-publish")
         # if not 0, than we have an MQTT problem
