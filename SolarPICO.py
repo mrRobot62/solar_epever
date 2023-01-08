@@ -16,7 +16,7 @@ import digitalio
 import time
 import binascii
 import asyncio
-
+import json
 LED = board.LED
 
 
@@ -80,7 +80,7 @@ class ErrorObj:
     def errID(self, error=None):
         """ getter/setter error code """
         if error != None:
-            self._error = (error if error > 0 else 1)
+            self._error = (error if error > 1 else 1)
         return self._error
         
 class Interval:
@@ -148,10 +148,17 @@ async def TaskEPEVER(epever, interval, error):
             print (f">>>>>>>>> FCode '{fc}'")
             for reg in sorted(epever.getRegisterList(fc)):
                 print (f"---------- Register '{reg}'")
-                raw, converted = epever.read(fc, int(hex(int(reg,16)),16))  
+                raw, converted = epever.read(fc, int(hex(int(reg,16)),16))
+                if raw is None or converted is None:
+                    error.errID(os.getenv('HEARTBEAT_ERROR_MODBUS'))
+                else:
+                    error.errID(0)	# no error
+                    
                 rc = mqtt.publish(converted, epever_sub_topic)
                 if rc > 0:
                     error.errID(os.getenv('HEARTBEAT_ERROR_MQTT'))
+                else:
+                    error.errID(0)	# no error
                 await asyncio.sleep(interval.value)
 
 async def TaskErrorTest(interval, error):

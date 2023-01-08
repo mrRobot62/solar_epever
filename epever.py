@@ -10,7 +10,8 @@ import binascii
 from struct import *
 from modbusrtu import ModBusRTU
 import adafruit_logging as logging
-        
+import json
+
 class EPEVER(ModBusRTU):
     LOGO="""
  _____  _____  _____  _____  _____  _____ 
@@ -111,7 +112,7 @@ class EPEVER(ModBusRTU):
     
     def _convert2Bin(self,value):
         """ convert a value into its binary representation """
-        convert = bin(int(value))[2:] # remove 0b
+        convert = f"{bin(int(value))[2:]:0>16}" # remove 0b, create a 16bit string value
         return convert	
     
     def _convertData(self, fcode, register, rcfg, data):
@@ -127,7 +128,7 @@ class EPEVER(ModBusRTU):
         Return
         converted 	dictionary {"fcode":<fcode>, "register": <register>, "len":<len>, "value":<value>, "unit":<unit>, "info":<info>}}
         """
-        converted = {"fcode":"", "register":"", "len":0, "identifier":"", "unit":"", "info":"", "value":0}
+        converted = {'fcode':'', "register":"", "len":0, "identifier":"", "unit":"", "info":"", "value":0}
         try:
             data = data[fcode]
             value = float(int(data[3]) / rcfg["scale"])
@@ -137,16 +138,19 @@ class EPEVER(ModBusRTU):
             converted["identifier"] = rcfg["identifier"]
             converted["unit"] 		= rcfg["unit"]
             converted["info"] 		= rcfg["info"]
-            converted["value"] 		= value
             if rcfg["convert"] == "bin":
                 binary = self._convert2Bin(data[3])
-                converted["binary"] = binary
-            #print (f">>>> {converted}")
+                converted["value"] 		= binary
+            else:
+                converted["value"] 		= value
+
+            #print (f"EPEVER >>>> {converted}")
             #print (f"**** {data}")
             self.log.debug(f"_convertData() => {str(converted)}")
         except:
             converted["info"] = "error in epever.py Z130-143" 
         self.log.debug(f"_convertData() => {str(converted)}")
+        
         return converted
         
     def read(self, fcode, register):
@@ -255,4 +259,5 @@ class EPEVER(ModBusRTU):
 # #crc = epever.crc16(d3,True)
 # #print (f"CRC: {hex(crc).upper()}")
 # 
+
 
