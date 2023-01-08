@@ -2,7 +2,7 @@
 Written in CircuitPython for a Raspberry RP2040 PICO W board. The software run asynchronously an read all configured registers out from the EPEVER device.
 Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed MQTT extension)
 
-> Please NOTE: Exception handling is poor implemented. Will work on this issue next time
+> Please NOTE: Exception handling is poor implemented. Will work on this issue next time. Currently there is a bug in blinking the error LED. If PICO is connected via USB and startet via Thonny, every thing works well. If running stand alone after few ModBus requests the LED blinks 6x (indicator for MQTT Problem) but there is no problem, data is transfered correctly.
 
 ## History
 |Version|Date|Info|
@@ -125,7 +125,7 @@ MQTT_LOGLEVEL=20
 
 ``` 
 
-## HeardBeat
+## Heart-Beat
 This section is used to indicate, that the system is running or if an error occured with a blinking led
 
 * `HEARTBEAT_INTERVAL` how often a heart beat signal should raised (default 5000ms)
