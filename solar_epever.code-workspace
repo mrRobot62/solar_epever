@@ -16,7 +16,7 @@
 		"python.analysis.extraPaths": [
 			"",
 			"/Users/bernhardklein/.vscode/extensions/joedevivo.vscode-circuitpython-0.1.19-darwin-arm64/stubs",
-			"/Users/bernhardklein/Library/Application Support/Code/User/globalStorage/joedevivo.vscode-circuitpython/bundle/20230108/adafruit-circuitpython-bundle-py-20230108/lib"
+			"/Users/bernhardklein/Library/Application Support/Code/User/globalStorage/joedevivo.vscode-circuitpython/bundle/20230113/adafruit-circuitpython-bundle-py-20230113/lib"
 		],
 		"circuitpython.board.version": "8.0.0-beta.6"
 	}

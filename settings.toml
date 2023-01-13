@@ -4,6 +4,7 @@
 ################################################
 CIRCUITPY_WIFI_SSID="TP-LINK_7692"
 CIRCUITPY_WIFI_PASSWORD="24136440"
+CIRCUITPY_WIFI_HOSTNAME="SolarPICO"
 
 ################################################
 # GENERAL

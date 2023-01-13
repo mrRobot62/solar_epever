@@ -45,14 +45,22 @@ else:
 #soyo = SoyoSource(soyo_uart)
 
 log.info("Connecting to WiFi ...")
+wifi.radio.hostname = os.getenv('CIRCUITPY_WIFI_HOSTNAME')
 wifi.radio.connect(os.getenv('CIRCUITPY_WIFI_SSID'), os.getenv('CIRCUITPY_WIFI_PASSWORD'))
+
 log.info("SolarPICO connected")
 pool = socketpool.SocketPool(wifi.radio)
 mac = ":".join([ f"{i:02x}" for i in wifi.radio.mac_address]).upper()
 log.info(f"MAC:{mac}")
+log.info(f"IP-Address: {wifi.radio.ipv4_address}")
 
 # get my IOBrokerMQTT object
 mqtt = IOBrokerMQTT(SolarMQTT(wifi))
+
+PICO_WIFI_SSID  = os.getenv('CIRCUITPY_WIFI_SSID')
+PICO_WIFI_IP    = f"{wifi.radio.ipv4_address}"
+PICO_WIFI_MAC   = mac
+PICO_HOSTNAME   = f"{wifi.radio.ipv4_address}"
 
 class ErrorObj:
     """ Simple class to hold an error code and an error interval"""
