@@ -10,9 +10,17 @@ Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed M
 |0.1.0|2023-01-05|initial version working with EPEVER XTRA 4415n|
 |0.2.0|2023-01-07|MQTT implementation, some bugfixes. First stable release|
 |0.2.1|2023-01-08|Bugfixings|
+|0.2.2|2023-01-08|More MQTT topics for better status review|
+|0.3.0|2023-01-15|User more than one ModBUS device (like two EPVERS or more)|
 ||||
 
 # Release Notes
+
+## 0.3.0
+Some user use more than one ModBus device in a chain. With this version it's possbile to work with
+several EPEVER devices. All devices use the same base configuration from settings.toml.
+## 0.2.2
+More static topics will be created. Like PICO_WIFI_SSID, PICO_WIFI_IP, PICO_WIFI_MAC, PICO_HOSTNAME
 ## 0.2.1
 * Fixing a mqtt-publishing error, that occurs on topic `_LAST_RUN_`. Transfer now a json.dumps(payload)
 * Fixing an error on data which represent a binary information (like register 3200, 3201). The value is not converted into a 16bit binary string
