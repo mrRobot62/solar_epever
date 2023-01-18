@@ -16,7 +16,7 @@ Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed M
 
 # Release Notes
 
-## 0.3.0
+## 0.3.0-RC1
 Major-Changes 
 
 * Some users use more than one EPEVER-ModBus device in a chain. With this version it's possbile to work with
