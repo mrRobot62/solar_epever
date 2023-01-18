@@ -2,13 +2,14 @@
 # WiFI-Configuration
 #
 ################################################
-CIRCUITPY_WIFI_SSID="TP-LINK_7692"
-CIRCUITPY_WIFI_PASSWORD="24136440"
-CIRCUITPY_WIFI_HOSTNAME="SolarPICO"
+PICO_WIFI_SSID="TP-LINK_7692"
+PICO_WIFI_PASSWORD="24136440"
+PICO_WIFI_HOSTNAME="SolarPICO"
 
 ################################################
 # GENERAL
 ################################################
+SOLAR_PICO_VERSION = "0.3.0-RC1"
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 LOGLEVEL = 20
 UART0_TX = "GP0"
@@ -34,14 +35,25 @@ HEARTBEAT_ERROR_MQTT = 6
 ################################################
 # EPEVER
 ################################################
+
+MODBUS_UART=1
+MODBUS_BAUD=115200
+
 EPEVER_DEMO="False"
 EPEVER_INTERVAL = 5000
-EPEVER_VERSION = "V 0.2.1"
-EPEVER_UART=1
-EPEVER_BAUD=115200
+EPEVER_VERSION = "V 0.2.2"
+
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 EPEVER_LOGLEVEL=20
-EPEVER_TOPIC_KEY="register"
+# use ModBus deviceID comma separated => "1,2,3" if you have 3 EPEVER devices with ID1, ID2, ID3
+# Note: Circuitpython kowns only string and int values
+EPEVER_DEVICE_IDS = "1"
+# Configure for every EPEVER device an own topic name
+EPEVER_TOPIC_KEY="XTRA4415,TRACER"
+# enable=1 rtc sync, disable=0
+EPEVER_SYNC_RTC_ENABLE=1
+# sync every x seconds
+EPEVER_SYNC_RTC_DELTA=60
 
 ################################################
 # MQTT-Configuration
@@ -52,15 +64,16 @@ EPEVER_TOPIC_KEY="register"
 #MQTT_TOPIC="<your_topic>"
 #MQTT_USER="<your_user"
 #MQTT_PW="<users_password>"
-
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
-MQTT_LOGLEVEL=20
+#MQTT_LOGLEVEL=20
 
 MQTT_BROKER_IP="192.168.0.240"
 MQTT_PORT=1883
-MQTT_PREFIX="RP2040_SOLAR"
+MQTT_PREFIX="RP2040_SOLAR_2"
 MQTT_TOPIC="SOLAR_PICO"
 MQTT_USER="lunax"
 MQTT_PW="granny.COPTER3opus"
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 MQTT_LOGLEVEL=20
+
+# END

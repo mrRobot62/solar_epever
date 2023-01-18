@@ -11,6 +11,7 @@ import wifi
 import socketpool
 import board
 import os
+import sys
 import busio
 import digitalio
 import time
@@ -29,24 +30,31 @@ UART1_RX = eval(f"board.{os.getenv('UART1_RX')}")
 
 log = logging.getLogger('SolarPICO')        
 log.setLevel(os.getenv('LOGLEVEL'))
+epever_devices = []
 
-if os.getenv('EPEVER_UART') == 0:
-    uart0 = busio.UART(UART0_TX, UART0_RX, baudrate=os.getenv('EPEVER_BAUD'))
-    epever = EPEVER(uart0)
+log.info(os.getenv('SOLAR_PICO_VERSION'))
 
-elif os.getenv('EPEVER_UART') == 1:
-    uart1 = busio.UART(UART1_TX, UART1_RX, baudrate=os.getenv('EPEVER_BAUD'))
-    epever = EPEVER(uart1)
+if os.getenv('MODBUS_UART') == 0:
+    uart = busio.UART(UART0_TX, UART0_RX, baudrate=os.getenv('MODBUS_BAUD'))
+    log.info("UART0 connected")
+elif os.getenv('MODBUS_UART') == 1:
+    uart = busio.UART(UART1_TX, UART1_RX, baudrate=os.getenv('MODBUS_BAUD'))
+    log.info("UART1 connected")
 else:
     msg = "UART not correctly configured"
     log.error(msg)
     sys.exit(msg)
     
+ids = os.getenv('EPEVER_DEVICE_IDS')
+ids = [int(i) for i in ids.split(',')]
+log.info(f"EPEVER devices: {ids}")
+
+names = os.getenv('EPEVER_TOPIC_KEY').split(',')
 #soyo = SoyoSource(soyo_uart)
 
 log.info("Connecting to WiFi ...")
-wifi.radio.hostname = os.getenv('CIRCUITPY_WIFI_HOSTNAME')
-wifi.radio.connect(os.getenv('CIRCUITPY_WIFI_SSID'), os.getenv('CIRCUITPY_WIFI_PASSWORD'))
+wifi.radio.hostname = os.getenv('PICO_WIFI_HOSTNAME')
+wifi.radio.connect(os.getenv('PICO_WIFI_SSID'), os.getenv('PICO_WIFI_PASSWORD'))
 
 log.info("SolarPICO connected")
 pool = socketpool.SocketPool(wifi.radio)
@@ -54,13 +62,17 @@ mac = ":".join([ f"{i:02x}" for i in wifi.radio.mac_address]).upper()
 log.info(f"MAC:{mac}")
 log.info(f"IP-Address: {wifi.radio.ipv4_address}")
 
+
 # get my IOBrokerMQTT object
 mqtt = IOBrokerMQTT(SolarMQTT(wifi))
 
-PICO_WIFI_SSID  = os.getenv('CIRCUITPY_WIFI_SSID')
-PICO_WIFI_IP    = f"{wifi.radio.ipv4_address}"
-PICO_WIFI_MAC   = mac
-PICO_HOSTNAME   = f"{wifi.radio.ipv4_address}"
+# initialize EPEVER devices
+print ("-S---------")
+for i in range(len(ids)):
+    epever_devices.append(EPEVER(uart=uart, slaveID=ids[i], name=names[i], demo=False, pool=pool))
+    time.sleep(1)
+print ("-E---------")
+
 
 class ErrorObj:
     """ Simple class to hold an error code and an error interval"""
@@ -97,104 +109,92 @@ class Interval:
     def __init__(self, initial_interval):
         self.value = float(initial_interval / 1000)
 
-async def TaskWriteLimiter(obj, interval, error):
-    while True:
-        await asyncio.sleep(interval.value)
-
-        
-async def TaskReadLimiter(obj, interval, error):
-    """ """
-    while True:
-        print (f"\n-- SOYO READ -------------------------")
-        data = obj.readSOYO()
-        print (f"SOYO-DATA {data}")
-        result = obj.convertData(data)
-
-        print(f"Data from SOYO '{result}'")
-        await asyncio.sleep(interval.value)
-
-async def TaskBMS(bms, interval, error):
-    """ Asynchronous worker for DalyBMS. Read out register, write data via MQTT """ 
-    while True:
-        for register in sorted(bms.getRegisterList()):
-            print (f"\n-- 0x{register} ------------------------")
-            print(f"==> Send command '{bms.getRegisterCMD(register)}'")
-            nbytes = bms.writeBMS(bms.getRegisterCMD(register))
-            time.sleep(0.1)
-    #        #data = readBMSRaw(nbytes=0, cmd=cmd)
-            data = bms.readBMSRaw(cmd=register)
-            print(f"<== BMS data received '{binascii.hexlify(data)}'")
-            result = bms.convertData(data)
-            print(f"Data from BMS '{result}'")
-            await asyncio.sleep(interval.value())
-
 async def TaskHeartBeat(interval, error):
     """ Simple Heartbeat-Signal """
     while True:
         with digitalio.DigitalInOut(LED) as led:
             led.switch_to_output(value=False)
-            count = error.errID()
-            print (f">>>> HEART-BEAT <<<< {error.value()}/{count}")
-            if count > 1:
-                error.value(error.error_interval())
-            else:
-                error.value(error.idle_interval())
-                count=1
-            for i in range(count):
-                led.value = True
-                time.sleep(0.25)
-                led.value = False
-                time.sleep(0.15)
+#            count = error.errID()
+#            log.info(f">>>> HEART-BEAT <<<< {error.value()}/{count}")
+            log.info(f">>>> HEART-BEAT <<<< ")
+#            if count > 1:
+#                error.value(error.error_interval())
+#            else:
+#                error.value(error.idle_interval())
+#                count=1
+#            for i in range(count):
+            led.value = True
+            time.sleep(0.25)
+            led.value = False
+            time.sleep(0.15)
        
         await asyncio.sleep(interval.value)
 
-async def TaskEPEVER(epever, interval, error):
-    """ Asynchronous task to read EPEVER MPPT charger - only READ """
-    epever_sub_topic = os.getenv("EPEVER_TOPIC_KEY")
+async def TaskEPEVERSyncRTC(devices, interval, error):
+    """ Asynchronous task to sync internen RTC in EPEVER devices """
     while True:
-        for fc in sorted(epever.getFunctionCodeList()):
-            print (f">>>>>>>>> FCode '{fc}'")
-            for reg in sorted(epever.getRegisterList(fc)):
-                print (f"---------- Register '{reg}'")
-                raw, converted = epever.read(fc, int(hex(int(reg,16)),16))
-                if raw is None or converted is None:
-                    error.errID(os.getenv('HEARTBEAT_ERROR_MODBUS'))
-                else:
-                    error.errID(0)	# no error
-                    
-                rc = mqtt.publish(converted, epever_sub_topic)
-                if rc > 0:
-                    error.errID(os.getenv('HEARTBEAT_ERROR_MQTT'))
-                else:
-                    error.errID(0)	# no error
-                await asyncio.sleep(interval.value)
+        for epever in devices:
+            epever_sub_topic = epever.getName() + "/"
+            reg = "9013"
+            fc = "03"
+            log.info(f"""
+************************************************************
+SyncRTC via register {reg} --  every {interval.value}sec
+************************************************************
+""")
+            raw, converted = epever.read(fc, int(hex(int(reg,16)),16))
+            rc = mqtt.publish(epever_sub_topic, converted)
+            
+            await asyncio.sleep(interval.value)
 
-async def TaskErrorTest(interval, error):
-    import random
-    random.seed(100)
+
+async def TaskEPEVER(devices, interval, error):
+    """ Asynchronous task to read EPEVER MPPT charger - only READ """
+    #epever_sub_topics = os.getenv("EPEVER_TOPIC_KEY").split(",")
     while True:
-        error.errID(random.randint(1,7))
-        error.value(error.error_interval())
-        print (f"simulate error {error.errID()}")
-        await asyncio.sleep(interval.value)
-              
-        
+        for epever in devices:
+            epever_sub_topic = epever.getName() + "/"
+            registers = sorted(epever.getFunctionCodeList())
+            for fc in registers:
+                log.info (f"""
+-----------------------------------
+{epever.name} - FCode '{fc}'
+-----------------------------------
+
+""")
+                for reg in sorted(epever.getRegisterList(fc)):
+                    log.info (f"""
+    -----------------------------------
+    {epever.name} --- Register '{reg}'
+    -----------------------------------
+""")
+                    raw, converted = epever.read(fc, int(hex(int(reg,16)),16))
+#                    if raw is None or converted is None:
+#                        error.errID(os.getenv('HEARTBEAT_ERROR_MODBUS'))
+#                    else:
+#                        error.errID(0)	# no error
+                        
+                    rc = mqtt.publish(epever_sub_topic, converted)
+                    rc = mqtt.generateStatistic(epever_sub_topic, converted)                
+                    await asyncio.sleep(interval.value)
+       
 async def main():
     errObj = ErrorObj(idle_interval=os.getenv('HEARTBEAT_IDLE_INTERVAL'), error_interval=os.getenv('HEARTBEAT_ERROR_INTERVAL'))
-    #bms_interval =  Interval(os.getenv('BMS_INTERVAL'))
     epever_interval =  Interval(os.getenv('EPEVER_INTERVAL'))
-    #soyo_interval =  Interval(os.getenv('SOYO_INTERVAL'))
+    epever_sync_interval =  Interval(os.getenv('EPEVER_SYNC_RTC_DELTA')*1000)
+    epever_enable_sync = os.getenv('EPEVER_SYNC_RTC_ENABLE')
     hb_interval = Interval(os.getenv('HEARTBEAT_INTERVAL'))
     err_interval = Interval(30000)
     
-    #bms_task = asyncio.create_task(TaskBMS(bms,bms_interval,errObj))
-    epever_task = asyncio.create_task(TaskEPEVER(epever,epever_interval,errObj))
-    #soyo_task_read = asyncio.create_task(TaskReadLimiter(soyo,soyo_interval,errObj))
+    epever_task = asyncio.create_task(TaskEPEVER(epever_devices,epever_interval,errObj))
     hb_task = asyncio.create_task(TaskHeartBeat(hb_interval,errObj))
-    #err_task = asyncio.create_task(TaskErrorTest(err_interval,errObj))
+    if epever_enable_sync:
+        log.info("ENABLE Epever RTC synchronisation....")
+        epever_sync_task = asyncio.create_task(TaskEPEVERSyncRTC(epever_devices,epever_sync_interval,errObj))
+        await asyncio.gather(epever_task, hb_task, epever_sync_task)
+    else:
+        await asyncio.gather(epever_task, hb_task)
     
-#    await asyncio.gather(bms_task,soyo_task_read, hb_task)
-    await asyncio.gather(epever_task, hb_task)
 
 
 
@@ -208,6 +208,7 @@ for i in range (5):
         time.sleep(0.10)        
 
 asyncio.run(main())
+
 
 
 

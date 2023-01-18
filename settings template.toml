@@ -3,12 +3,14 @@
 # rename it to settings.toml
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
+Version = "0.2.1"
+#
 ################################################
 # WiFI-Configuration
 #
 ################################################
-CIRCUITPY_WIFI_SSID="TP-LINK_7692"
-CIRCUITPY_WIFI_PASSWORD="24136440"
+CIRCUITPY_WIFI_SSID="<ssid>"
+CIRCUITPY_WIFI_PASSWORD="<password>"
 CIRCUITPY_WIFI_HOSTNAME="SolarPICO"
 
 ################################################
@@ -37,32 +39,26 @@ HEARTBEAT_ERROR_WLAN = 5
 HEARTBEAT_ERROR_MQTT = 6
 
 ################################################
-# EPEVER
+# EPEVER - MODBUS
 ################################################
 EPEVER_DEMO="False"
 EPEVER_INTERVAL = 5000
-EPEVER_VERSION = "V 0.2.1"
+EPEVER_VERSION = "V 0.2.2"
 EPEVER_UART=1
 EPEVER_BAUD=115200
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 EPEVER_LOGLEVEL=20
-EPEVER_TOPIC_KEY="register"
+# below attributes should be set per connected device
+EPEVER_TOPIC_KEY=["XTRA4415","TRACER"]
+EPEVER_DEVICES_ID=[1,2]
 
 ################################################
 # MQTT-Configuration
 ################################################
-#MQTT_BROKER_IP="<broker-ip-address>"
-#MQTT_PORT=1883
-#MQTT_PREFIX="RP2040_SOLAR"
-#MQTT_TOPIC="<your_topic>"
-#MQTT_USER="<your_user"
-#MQTT_PW="<users_password>"
-
-MQTT_BROKER_IP="192.168.0.240"
+MQTT_BROKER_IP="<broker-ip-address>"
 MQTT_PORT=1883
-MQTT_PREFIX="RP2040_SOLAR"
-MQTT_TOPIC="SOLAR_PICO"
-MQTT_USER="lunax"
-MQTT_PW="granny.COPTER3opus"
-# 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
-MQTT_LOGLEVEL=20
+MQTT_PREFIX="SolarPICO"
+MQTT_TOPIC="<your_topic>"
+MQTT_USER="<your_user"
+MQTT_PW="<users_password>"
+

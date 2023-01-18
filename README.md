@@ -17,10 +17,45 @@ Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed M
 # Release Notes
 
 ## 0.3.0
-Some user use more than one ModBus device in a chain. With this version it's possbile to work with
-several EPEVER devices. All devices use the same base configuration from settings.toml.
-## 0.2.2
-More static topics will be created. Like PICO_WIFI_SSID, PICO_WIFI_IP, PICO_WIFI_MAC, PICO_HOSTNAME
+Major-Changes 
+
+* Some users use more than one EPEVER-ModBus device in a chain. With this version it's possbile to work with
+several EPEVER devices. All devices use the same base configuration from settings.toml. <br>
+Every EPEVER device can publish data into a separate topic via MQTT but must be connected in the same ModBus chain.<br>
+All EPEVER devices must have the same baud rate
+Typical MQTT folder struct could be:
+    ```
+    - RP2040_SOLAR
+        - EPEVER_XTRA
+            - List of datapoints (Register, see 'identifier' of register definition in epever.py)
+        - EPVER_TRACER
+            - List of datapoints (Register, see 'identifier' of register definition in epever.py)
+    ```
+
+* More information Topics
+    ```
+    - _DATA_ : payload as json-struct
+    - _TIME_ : times.time() in milliseconds since 1970-01-01
+    - _LAST_DATA : removed
+    - _PICO_WIFI_SSID : connected to this SSID
+    - _PICO_IP_ADDRESS : PICOs IP-Address
+    - _PICO_MAC : PICOs MAC-Address
+    ```
+* Due to a time drift in (maybe a lot - all?) EPEVER chargers, now it is possible to sync the EPEVER every x seconds with the PICO. The PICO syncs his internal RTC with NTP-Time every day too. On my EPEVER the time drift ist several seconds per day ! To use an automatic RTC sync two new paramerts are available
+    ```
+    EPEVER_SYNC_RTC=1
+    EPEVVER_SYNC_DELTA_SEC=180
+    ```
+    **EPEVER_SYNC_RTC_ENABLE**: enable(1), disable(0) this function
+    **EPEVER_SYNC_RTC_DELTA**: if delta between NTP-Time (Pico) and RTC-Time (EPVER) is more than this, a RTC sync will be established. Lowest value is 60sec to avoid an ModBus transfer overkill, biggest number is 86400 (one day)
+
+> Note: all EPVER devices log the same number of registers. If you want to use different loggings please create an own EPVER-Class for this device, remove all unneccessary registers. Than you have to adapt in SolarPICO the code (for every UART) 
+```
+for i in os.getenv('EPEVER_DEVICES_ID'):
+    epever_devices.append(EPEVER(uart0), slaveID=i)
+```
+
+
 ## 0.2.1
 * Fixing a mqtt-publishing error, that occurs on topic `_LAST_RUN_`. Transfer now a json.dumps(payload)
 * Fixing an error on data which represent a binary information (like register 3200, 3201). The value is not converted into a 16bit binary string

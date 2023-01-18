@@ -35,46 +35,19 @@ class ModBusRTU():
     
     
     
-    """
-    # demo payloads from a ModBus Slave
-    # all payloads asume slaveID = 01
-    # structure {<func> : {<register>:<payload>}}
-    demo_payloads = {
-        "01" : {},    
-        "02" : {},    
-        "03" : {"3100":'010306AE415652434049AD'},    
-        "04" : {
-            "3100": '0104020A663FBA', # ~PV-VOLT ca. 26.9V (send: 01 04 31 00  00 01 3F 36)
-            "3101": '0104020000B930', # ~PV-Current 0A (send: 01 04 31 01  00 01 6E F6)
-            "3102": '010404000000FB84' # ~PV-Power 1W (send: 01 04 31 02  00 02 DE F7 : Note : 2 Registers are read (H & L Register 3102 & 3103)
-                
-        },   	 
-    }
-    
-    def __init__(self, uart, slaveID=1, demo=False):
+    """   
+    def __init__(self, uart=None, slaveID=1):
         self._uart = uart
+        self.log = logging.getLogger('MODBUS')
+        self.log.setLevel(30)	# 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
         if self._uart is None:
             self.log.warning("SET DEMO-MODE due to no uart object")
             demo = True
         if slaveID < 0 or slaveID > 0xF7:	# max SlaveID = 247
             slaveID = 1
         self._sid = slaveID
-        self._demo = demo					# if true, no uart activities are done, return values are simulated. Used for tests
-        if self._demo:
-            self.log.warning(">>>>>>>>>> DEMO-MODE <<<<<<<<<<<<")
         self._func = self._address = self._quantity = None
-        self.log = logging.getLogger('MODBUS')
-        self.log.setLevel(30)	# 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
-            
-            
-    def getDemoPayload(self, func, register):
-        payload = None
-        if func in self.demo_payloads:
-            addresses = self.demo_payloads[func]
-            if register in addresses:
-                payload = addresses[register]
-        return payload
-        
+                   
     def crc16(self, data, hasCRC=False, swapByte=True):
         """
         generate ModBus RTU CRC16
@@ -127,17 +100,18 @@ class ModBusRTU():
         return data
         
         
-    def receive(self, returnByteArray=False):
+    def receive(self, returnByteArray=False, demoData=None):
         """
         read bytes from ModBus slave and return raw list
         
         """
         buffer = []
         try:
-            if self._demo == False:
+            if demoData is None:
                 buffer.extend(self._uart.read())
             else:
-                buffer = bytearray(self.getDemoPayload(self._func, self._address))
+                log.debug(f"MODBUS DemoData: {demoData}")
+                buffer = bytearray(demoData)
         except:
             buffer = []
         #print (f"BUFFER: {buffer}")
@@ -146,7 +120,7 @@ class ModBusRTU():
         #print (f"{type(buffer)} -> {buffer}")            
         return buffer    
     
-    def send(self, func, register, quantity=1, swapBytes=True):
+    def send(self, func, register, quantity=1, swapBytes=True, demo=False):
         """
         generate a ModBus RTU byte array
         
@@ -183,13 +157,13 @@ class ModBusRTU():
 
         data = bytearray(p)
         crc = self.crc16(data, hasCRC=False, swapByte=True)
-        self.log.debug(f"CRC: {hex(crc)}")
+        self.log.debug(f"MODBUS CRC: {hex(crc)}")
         data.extend(f"{(crc >> 8):02x}")		# add MSB
         data.extend(f"{(crc & 0xFF):02x}")		# add LSB
         self.log.debug(str(data))
         
         try:
-            if self._demo == False:
+            if demo == False:
                 nbytes = self._uart.write(binascii.unhexlify(data))
             else:
                 self.log.warning(f"DEMO_MODE_WRITE {str(data)}")
