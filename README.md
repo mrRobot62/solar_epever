@@ -11,7 +11,7 @@ Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed M
 |0.2.0|2023-01-07|MQTT implementation, some bugfixes. First stable release|
 |0.2.1|2023-01-08|Bugfixings|
 |0.2.2|2023-01-08|More MQTT topics for better status review|
-|0.3.0|2023-01-15|User more than one ModBUS device (like two EPVERS or more)|
+|0.3.0-RC1|2023-01-15|User more than one ModBUS device (like two EPVERS or more)|
 ||||
 
 # Release Notes
