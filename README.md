@@ -19,7 +19,8 @@ Via MQTT data can be send to a MQTT-Broker (in my case ioBroker with installed M
 ## 0.3.0-RC1
 Major-Changes 
 
-* Some users use more than one EPEVER-ModBus device in a chain. With this version it's possbile to work with
+### More EPEVER devices usable
+Some users use more than one EPEVER-ModBus device in a chain. With this version it's possbile to work with
 several EPEVER devices. All devices use the same base configuration from settings.toml. <br>
 Every EPEVER device can publish data into a separate topic via MQTT but must be connected in the same ModBus chain.<br>
 All EPEVER devices must have the same baud rate
@@ -33,28 +34,40 @@ Typical MQTT folder struct could be:
     ```
 > Important up from this release the topic name is changed via `identifier` attribute for register configuration. Maybe you have to copy old values to this new topic inside your database
 
-* More information Topics
+### More information topics
+More information Topics are now available
     ```
-    - _DATA_ : payload as json-struct
+    - DATA : payload as json-struct
     - _TIME_ : times.time() in milliseconds since 1970-01-01
     - _LAST_DATA : removed
-    - _PICO_WIFI_SSID : connected to this SSID
-    - _PICO_IP_ADDRESS : PICOs IP-Address
-    - _PICO_MAC : PICOs MAC-Address
+    - PICO_WIFI_SSID : connected to this SSID
+    - PICO_IP_ADDRESS : PICOs IP-Address
+    - PICO_MAC : PICOs MAC-Address
+    - PICO_LOG : log messages 
+    - PICO_LAST_ERROR : last error message
     ```
-* Due to a time drift in (maybe a lot - all?) EPEVER chargers, now it is possible to sync the EPEVER every x seconds with the PICO. The PICO syncs his internal RTC with NTP-Time every day too. On my EPEVER the time drift ist several seconds per day ! To use an automatic RTC sync two new paramerts are available
+### Sync EPEVER RTC internal clock
+Due to a time drift in (maybe a lot - all?) EPEVER chargers, now it is possible to sync the EPEVER every x seconds with the PICO. The PICO syncs his internal RTC with NTP-Time every day too. On my EPEVER the time drift ist several seconds per day ! To use an automatic RTC sync two new paramerts are available
     ```
     EPEVER_SYNC_RTC=1
-    EPEVVER_SYNC_DELTA_SEC=180
+    EPEVER_SYNC_DELTA_SEC=60
+    EPEVER_SYNC_INTERVAL=600000
     ```
     **EPEVER_SYNC_RTC_ENABLE**: enable(1), disable(0) this function
-    **EPEVER_SYNC_RTC_DELTA**: if delta between NTP-Time (Pico) and RTC-Time (EPVER) is more than this, a RTC sync will be established. Lowest value is 60sec to avoid an ModBus transfer overkill, biggest number is 86400 (one day)
+    **EPEVER_SYNC_INTERVAL**: how often should the pico check if a rtc drift is available. Value in seconds. Lowest value is 10secs, biggest value ist 86400 (1day)
+    **EPEVER_SYNC_RTC_DELTA**: if delta between NTP-Time (Pico) and RTC-Time (EPVER) is more than this, a RTC sync will be established. 
+    Value represent seconds. Lowest value is 10, biggest value is 3600 (1h)
 
 > Note: all EPVER devices log the same number of registers. If you want to use different loggings please create an own EPVER-Class for this device, remove all unneccessary registers. Than you have to adapt in SolarPICO the code (for every UART) 
 ```
 for i in os.getenv('EPEVER_DEVICES_ID'):
     epever_devices.append(EPEVER(uart0), slaveID=i)
 ```
+### MQTT Logger
+Due to some irritations around the error-blinking LED I decided to implement a MQTT-Log mechanism. Log messages can be send via MQTT to your broker and maybe from there written into a database. Log messages are populated under. This folder can't be changed
+`/<MQTT_PREFIX>/log`
+
+> Note: due to not enough stack space, it was not possible to include MQTT-Logging vor evey module. MQTT-Logging is only implemented inside `epever.py`
 
 
 ## 0.2.1
@@ -129,8 +142,9 @@ Configure your SSID and password for access to your WLAN. After configuration, p
 ################################################
 # WiFI-Configuration
 ################################################
-CIRCUITPY_WIFI_SSID="<ssid>"
-CIRCUITPY_WIFI_PASSWORD="<password>"
+PICO_WIFI_SSID="<your ssid>"
+PICO_WIFI_PASSWORD="<your wp2 pw>"
+PICO_WIFI_HOSTNAME="SolarPICO"
 ```
 
 ## EPEVER
@@ -152,6 +166,24 @@ EPEVER_UART=1
 EPEVER_LOGLEVEL=20
 EPEVER_TOPIC_KEY="identifier"
 ```
+### new up from 0.3.x 
+```
+# use ModBus deviceID comma separated => "1,2,3" if you have 3 EPEVER devices with ID1, ID2, ID3
+# Note: Circuitpython kowns only string and int values
+EPEVER_DEVICE_IDS = "1,2"
+# Configure for every EPEVER device an own topic name
+EPEVER_TOPIC_KEY="XTRA4415,TRACER"
+# enable=1 rtc sync, disable=0
+EPEVER_SYNC_RTC_ENABLE=1
+# sync every x seconds
+EPEVER_SYNC_RTC_DELTA=60
+EPEVER_SYNC_INTERVAL= 10
+```
+* **EPEVER_DEVICE_IDS**: Comma separated devices IDs from your EPEVER-devices. eg. "1,2,3" = you have three EPEVER with deviceID=1, ID=2, ID=3
+* **EPEVER_TOPIC_KEY**: MQTT-Topic for EVERY device, must be exactly same number as devices. Comma separated list
+* **EPEVER_SYNC_RTC_ENABLE** : If you need a periodically sync RTC inside your devices. set it this attribute to 1 (default). Disable = 0
+* **EPEVER_SYNC_RTC_DELTA**: Time delta in seconds between NTP-Time and EPEVER RTC-Time, if difference in seconds is larger than this value a sync process is started.
+* **EPEVER_SYNC_INTERVAL**: Time in seconds how often PICO check the internal RTC clock. Min Value =10, Max value = 3600(1h)
 
 ## MQTT
 
@@ -162,6 +194,10 @@ EPEVER_TOPIC_KEY="identifier"
 * `MQTT_USER` : MQTT-User
 * `MQTT_PW` : MQTT-Users password
 * `MQTT_LOGLEVEL` : explicit MQTT Logging level
+
+### New in 0.3.0
+* **MQTT_LOG_ENABLE="True"**: Default is "True" or 1, log messages will be send to your broker. Disable with "False" or 0
+* **MQTT_ERR_ENABLE="True"**:  Default is "True" or 1, log only error messages to your broker. Disable with "False" or 0
 
 ``` 
 ################################################
@@ -175,10 +211,12 @@ MQTT_USER="<user>"
 MQTT_PW="<password>"
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 MQTT_LOGLEVEL=20
-
+MQTT_LOG_TOPIC="PICO_LOG"
+MQTT_ERR_TOPIC="PICO_LAST_ERROR"
+MQTT_ADD_HANDLER="MQ
 ``` 
 
-## HeardBeat
+## HeartBeat
 This section is used to indicate, that the system is running or if an error occured with a blinking led
 
 * `HEARTBEAT_INTERVAL` how often a heart beat signal should raised (default 5000ms)
@@ -189,19 +227,21 @@ This section is used to indicate, that the system is running or if an error occu
 * `HEARTBEAT_ERROR_MQTT` blinks 6x if something goes wrong with MQTT
 * `HEARTBEAT_ERROR_WLAN` blinks 5x if something goes wrong with your WLAN connection
 
+Up from 0.3.x the error blink indicator is removed due to some problems. It is replaced by the new MQTT logger
+
 ``` 
 ################################################
 # HEART-BEAT
 ################################################
 HEARTBEAT_INTERVAL = 5000
 HEARTBEAT_IDLE_INTERVAL = 150
-HEARTBEAT_ERROR_INTERVAL = 500
+HEARTBEAT_ERROR_INTERVAL = 500          # removed in 0.3.x
 HEARTBEAT_IDLE = 1
-HEARTBEAT_ERROR_BMS = 2
-HEARTBEAT_ERROR_MODBUS = 3
-HEARTBEAT_ERROR_INVERTER = 4
-HEARTBEAT_ERROR_WLAN = 5
-HEARTBEAT_ERROR_MQTT = 6
+#HEARTBEAT_ERROR_BMS = 2                # removed in 0.3.x
+#HEARTBEAT_ERROR_MODBUS = 3             # removed in 0.3.x
+#HEARTBEAT_ERROR_INVERTER = 4           # removed in 0.3.x
+#HEARTBEAT_ERROR_WLAN = 5               # removed in 0.3.x
+#HEARTBEAT_ERROR_MQTT = 6               # removed in 0.3.x
 ``` 
 
 # Running your system
@@ -227,6 +267,10 @@ converted:	{'len': 2, 'info': '', 'value': 0.0, 'type': 'E1', 'register': '9000'
 >>>> HEART-BEAT <<<< 0.15/1
 ``` 
 ## Troubleshooting
+
+### TestMode for EPEVER devices
+a good solution is to test your system without any modbus devices. set the attribute `EPEVER_DEMO` to "True" and restart the system.
+Up from now, the software generate synthetic data to check your system. Results should be send to your MQTT-Broker. Please check if this works as designed. If not, something happens with your WIFI and/or MQTT configuration.
 ### Python exceptions occured
 Please check which kind of exception occured. Maybe your lib folder was not copied successfully or you use an inproper circuitpython version
 

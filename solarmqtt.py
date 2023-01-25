@@ -12,12 +12,8 @@ class SolarMQTT():
     """
     Standart MQTT client to read/write data to an topic on an MQTT-Broker
     """
-    def __init__(self, wifi, deviceID=None):
-        deviceID = ("1" if deviceID is None else str(deviceID))
-        self.log = logging.getLogger(f"MQTT{deviceID}")
-        #print (os.getenv('MQTT_LOGLEVEL'))
-        self.log.setLevel(os.getenv('MQTT_LOGLEVEL'))
-
+    def __init__(self, wifi, logger=None):
+        self.log = logger        
         self.mqtt_topic = f"/{os.getenv('MQTT_PREFIX')}/{os.getenv('MQTT_TOPIC')}/" 
         #self.mqtt_topic = self.pathJoin(endSlash=True, os.getenv('MQTT_PREFIX'), os.getenv('MQTT_TOPIC'))
         self.log.info(f"{SolarMQTT.__name__} Topic: {self.mqtt_topic}")
@@ -40,6 +36,10 @@ class SolarMQTT():
         self.log.info (f"{type(self).__name__} Connecting MQTT-Broker...")
         self.mqtt_client.connect()
         self.log.info(f"{type(self).__name__} initalized")
+
+    
+    def addHandler(self, handler):
+        self.log.addHandler(handler)
 
     def connected(self, client, userdata, flags, rc):
         """ callback after successfully connectioin to broker"""
@@ -80,25 +80,28 @@ class SolarMQTT():
         return path
 
 
-class IOBrokerMQTT():
+class IOBrokerMQTT(SolarMQTT):
     """
     Wrapper-Class for MQTT. This class publish EPEVER specific data into an EPEVER topic/subtopic
     
     """
-    def __init__(self,mqtt):
-        self.mqtt = mqtt
+    def __init__(self,wifi, logger):
+        super().__init__(wifi, logger)
         
         # below code send statistical informatio to your MQTT-Broker
-        t1 = self.mqtt.getSubTopic(subtopic="PICO_WIFI_SSID", endSlash=True)
-        t2 = self.mqtt.getSubTopic(subtopic="PICO_IP_ADDRESS", endSlash=True)
-        t3 = self.mqtt.getSubTopic(subtopic="PICO_MAC", endSlash=True)
-        t4 = self.mqtt.getSubTopic(subtopic="PICO_WIFI_HOSTNAME", endSlash=True)
+        t1 = self.getSubTopic(subtopic="PICO_WIFI_SSID", endSlash=True)
+        t2 = self.getSubTopic(subtopic="PICO_IP_ADDRESS", endSlash=True)
+        t3 = self.getSubTopic(subtopic="PICO_MAC", endSlash=True)
+        t4 = self.getSubTopic(subtopic="PICO_WIFI_HOSTNAME", endSlash=True)
+        t5 = self.getSubTopic(subtopic="LOG")
         
-        self.mqtt.publish(t1, f"{os.getenv('PICO_WIFI_SSID')}")
-        self.mqtt.publish(t2, f"{wifi.radio.ipv4_address}")
-        self.mqtt.publish(t3, ":".join([ f"{i:02x}" for i in wifi.radio.mac_address]).upper())
-        self.mqtt.publish(t4, f"{os.getenv('PICO_WIFI_HOSTNAME')}")
-        self.mqtt.log.info(f"{IOBrokerMQTT.__name__} initalized")
+        
+        
+        super().publish(t1, f"{os.getenv('PICO_WIFI_SSID')}")
+        super().publish(t2, f"{wifi.radio.ipv4_address}")
+        super().publish(t3, ":".join([ f"{i:02x}" for i in wifi.radio.mac_address]).upper())
+        super().publish(t4, f"{os.getenv('PICO_WIFI_HOSTNAME')}")
+        self.log.info(f"{IOBrokerMQTT.__name__} initalized")
 
     def generateStatistic(self, subtopic, payload):
         """ create some statistical topics 
@@ -115,14 +118,17 @@ class IOBrokerMQTT():
         _data = payload
         _time = time.time()
         payload = {"identifier" : 'ZZ_DATA', "value" : json.dumps(payload)}
-        print(payload)
+        #print(payload)
         self.publish(subtopic, payload)
         
         payload = {"identifier" : 'ZZ_TIME', "value" : f"{time.time()}"}
-        print(payload)
+        #print(payload)
         self.publish(subtopic, payload)
         return 0
 
+    def publish2(self, msg):
+        super().publish(self.mqtt_topic, msg)
+        
     def publish(self, subtopic, payload):
         """
         send payload to topic.
@@ -138,15 +144,15 @@ class IOBrokerMQTT():
         rc = 1
         if payload != None:
             if 'value' in payload:
-                self.mqtt.log.debug(f"{type(self).__name__}: subtopic: '{subtopic}'; payload: {payload}")
+                self.log.debug(f"{type(self).__name__}: subtopic: '{subtopic}'; payload: {payload}")
                 data = f"{payload['value']}"
                 datapoint = (None if 'identifier' not in payload else payload['identifier'])
-                topic = self.mqtt.getSubTopic(endSlash=True, subtopic=subtopic, datapoint=datapoint)
-                self.mqtt.publish(topic, data)                
+                topic = self.getSubTopic(endSlash=True, subtopic=subtopic, datapoint=datapoint)
+                super().publish(topic, data)                
                 rc = 0
             else:
-                self.mqtt.log.warning (f"'value' key not found in payload '{payload}'")
+                self.log.warning (f"'value' key not found in payload '{payload}'")
+                self.publish2(payload)
         else:
-            self.mqtt.log.warning ("Payload is none - ignore MQTT-publish")
-        # if not 0, than we have an MQTT problem
+            self.log.warning ("Payload is none - ignore MQTT-publish")
         return rc

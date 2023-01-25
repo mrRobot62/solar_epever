@@ -31,7 +31,7 @@ class EPEVER(ModBusRTU):
             "9000": {"identifier": "BATTERY_TYPE_9000", "unit":"type", "convert":"dec", "scale":1, "quantity":1, "fmt":'>BBBHxx',"demo":'0103020000b844', "info":""},
             "9001": {"identifier": "BATTERY_CAPACITY_9001", "unit":"'Ah", "convert":"dec", "scale":100, "quantity":1, "fmt":'>BBBHxx',"demo":'0103020069786a', "info":""},
             "9002": {"identifier": "TEMPERATUR_COEF_9002", "unit":"mV", "convert":"dec", "scale":100, "quantity":1, "fmt":'>BBBHxx',"demo":'0103020000b844', "info":""},
-            "9013": {"identifier": "RealTimeClock", "unit":"Date", "convert":"time", "scale":1, "quantity":3, "fmt":'>xxxBBBBBBxx',"demo":'', "info":"Read internal RealTimeClock"},
+            "9013": {"identifier": "RealTimeClock", "unit":"Date", "convert":"time", "scale":1, "quantity":3, "fmt":'>xxxBBBBBBxx',"demo":'3001121317', "info":"Read internal RealTimeClock"},
 
         },
         # Read Input Register(0x04)
@@ -83,7 +83,7 @@ class EPEVER(ModBusRTU):
             }
         }
         
-    def __init__(self,uart, slaveID=1, pool=None, name=None, demo=False):
+    def __init__(self,uart, logger=None, handler=None, slaveID=1, pool=None, name=None, demo=False):
         super().__init__(uart,slaveID)
         self._demo = demo
         self._pool = pool
@@ -91,18 +91,29 @@ class EPEVER(ModBusRTU):
         
         name = (type(self).__name__ if name is None else name)
         self.name = f"{name}"
-        self.log = logging.getLogger('EPEVER')        
-        self.log.setLevel(os.getenv('EPEVER_LOGLEVEL'))
+        if logger is None:
+            self.log = logging.getLogger('EPEVER')
+            self.log.setLevel(os.getenv('EPEVER_LOGLEVEL'))
+            if handler is not None:
+                self.log.info(f"Add new log handler '{handler}'")
+                self.log.addHandler(handler)
+        else:
+            self.log = logger
         self.log.info(self.LOGO)
         self.log.info(self.VERSION)
         self.log.info(f"EPVER connected via UART={uart}")
         self.log.info(f"EPVER SlaveID={slaveID}")
         self.log.info(f"EPVER Name={name}")
         self.log.info(f"{self.name} initalized. Mode: {('>>> DEMO-MODE <<<' if self._demo else '>>> REALTIME <<<' )}")
+        if self._demo:
+            print("--------- EPEVER - DEMO-MODE -------------")
+        else:
+            print("--------- EPEVER - REAL-TIME MODE -------------")
+
         
     def getName(self):
         return self.name
-        
+
     def getFunctionCodeList(self):
         """ return a key list from all function codes """
         return self.fCode.keys()
@@ -126,7 +137,8 @@ class EPEVER(ModBusRTU):
     def _convert2Bin(self,value):
         """ convert a value into its binary representation """
         convert = f"{bin(int(value))[2:]:0>16}" # remove 0b, create a 16bit string value
-        return convert	
+        return convert
+    
     def _convertRTC(self, data):
         """
         data is the response array of 6 bytes. EPVER send in a form like this [m,s,h,D,Y,M]
@@ -179,11 +191,13 @@ class EPEVER(ModBusRTU):
                 converted["value"] = "unknown"
 
         except Exception as err:
-            converted["info"] = f"error in epever.py {str(err)}" 
+            msg = f"error in epever.py {str(err)}"
+            converted["info"] = msg 
+            self.log.critical(msg)
+            
+        self.log.info(f"EPEVER data converted: '{str(converted)}'")
         
-        self.log.debug(f"_convertData() => {str(converted)}")
-        
-        return converted
+        return converted	
         
     def read(self, fcode, register):
         """
@@ -198,11 +212,20 @@ class EPEVER(ModBusRTU):
                             converted-dict => {"register":"<type>":"<value", "unit":<unit>}
         
         """
+
+
         regcfg = self._registerAvailable(fcode, register)
         if regcfg != None:
             converted = {}
-            self.log.debug("send data....")
-            demoData = (self.fCode[fcode][f"{register:04x}"]['demo'] if self._demo else None)
+            regKey = f"{register:04x}".upper()
+            msg = f"""
+---------------------------------------------------------
+{self.getName()} - FCode '{fcode}'	- Register '{regKey}'
+---------------------------------------------------------
+"""
+            self.log.info(msg)
+            demoData = (self.fCode[fcode][regKey]['demo'] if self._demo else None)
+            print(f"DEMO_DEMO '{demoData}'")
             nbytes, data = self.send(func=fcode,
                                      register=register,
                                      quantity=regcfg['quantity'],
@@ -211,7 +234,8 @@ class EPEVER(ModBusRTU):
                                       )
             self.log.info(f"SEND:\t\t{data}\t({nbytes}) DemoData: {demoData}")
             raw = self.receive(returnByteArray=True, demoData=demoData)
-            self.log.debug(f"raw bytearray {raw} ({len(raw)}); convert with fmt='{regcfg['fmt']}'")
+            print (f"DEMO_DEMO: RAW '{raw}'")
+            self.log.info(f"raw bytearray {raw} ({len(raw)}); convert with fmt='{regcfg['fmt']}'")
             if len(raw) >= 7:
 
                 decoded = self.decode(raw,fcode, fmt=regcfg['fmt'])

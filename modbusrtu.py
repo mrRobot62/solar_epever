@@ -110,15 +110,14 @@ class ModBusRTU():
             if demoData is None:
                 buffer.extend(self._uart.read())
             else:
-                log.debug(f"MODBUS DemoData: {demoData}")
+                self.log.debug(f"MODBUS DemoData: {demoData}")
                 buffer = bytearray(demoData)
         except:
             buffer = []
-        #print (f"BUFFER: {buffer}")
         buffer = (''.join(f'{i:02x}' for i in buffer) if returnByteArray else buffer)
         self.log.debug(f"{type(buffer)} -> {buffer}")
-        #print (f"{type(buffer)} -> {buffer}")            
-        return buffer    
+        print (f"{type(buffer)} -> {buffer}")            
+        return buffer
     
     def send(self, func, register, quantity=1, swapBytes=True, demo=False):
         """

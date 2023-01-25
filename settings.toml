@@ -18,19 +18,23 @@ UART1_TX = "GP4"
 UART1_RX = "GP5"
 UART2_TX = ""
 UART2_RX = ""
+LOGGER_HANDLERS="MQTTHandler"
 
 ################################################
 # HEART-BEAT
 ################################################
 HEARTBEAT_INTERVAL = 5000
 HEARTBEAT_IDLE_INTERVAL = 150
-HEARTBEAT_ERROR_INTERVAL = 500
 HEARTBEAT_IDLE = 1
-HEARTBEAT_ERROR_BMS = 2
-HEARTBEAT_ERROR_MODBUS = 3
-HEARTBEAT_ERROR_INVERTER = 4
-HEARTBEAT_ERROR_WLAN = 5
-HEARTBEAT_ERROR_MQTT = 6
+
+################################################
+# DalyBMS
+################################################
+DALYBMS_UART=1
+DALYBMS_BAUD=9600
+DALYBMS_INTERVAL=5000
+DALYBMS_VERSION="V 0.1.1"
+DALYBMS_LOGLEVEL=20
 
 ################################################
 # EPEVER
@@ -39,21 +43,23 @@ HEARTBEAT_ERROR_MQTT = 6
 MODBUS_UART=1
 MODBUS_BAUD=115200
 
-EPEVER_DEMO="False"
+EPEVER_DEMO="True"
 EPEVER_INTERVAL = 5000
 EPEVER_VERSION = "V 0.2.2"
-
-# 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 EPEVER_LOGLEVEL=20
+
 # use ModBus deviceID comma separated => "1,2,3" if you have 3 EPEVER devices with ID1, ID2, ID3
 # Note: Circuitpython kowns only string and int values
 EPEVER_DEVICE_IDS = "1"
 # Configure for every EPEVER device an own topic name
 EPEVER_TOPIC_KEY="XTRA4415,TRACER"
-# enable=1 rtc sync, disable=0
+# enable=1 rtc sync, disable=0. Alternative: "True"/"False" 
 EPEVER_SYNC_RTC_ENABLE=1
 # sync every x seconds
 EPEVER_SYNC_RTC_DELTA=60
+EPEVER_SYNC_INTERVAL= 10
+# Time zone offset - default is 0
+EPEVER_SYNC_TZ_OFFSET=0
 
 ################################################
 # MQTT-Configuration
@@ -75,5 +81,4 @@ MQTT_USER="lunax"
 MQTT_PW="granny.COPTER3opus"
 # 10=Debug, 20=Info, 30=Warning, 40=Error, 50=Critical
 MQTT_LOGLEVEL=20
-
 # END
